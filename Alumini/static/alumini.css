@@ -1,0 +1,10 @@
+body{
+    /* background-color: black; */
+    background-image: url('/static/images/background.png');
+}
+
+.navbar{
+    /* background-image: url('/static/images/background.png'); */
+    background-color: palevioletred;
+}
+

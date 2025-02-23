@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnis List</title>
+    <link rel="stylesheet" href="{% static alumini_list.css %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'alumini.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/alumini-profile-show/{{ user.id }}" style="margin-bottom: 15px;">Alumni</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/alumini-page">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-post">Create Post</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-list">Show Alumnis</a>
+              </li>
+
+              
+                <li class="nav-link" >
+                  <a href="/connection-requests/" style="text-decoration: none; color: rgb(87, 85, 85);"><img src="{% static '/images/iconi.png' %}" alt="" width="40" height="40"></a>
+                  <sup><span id="requestCount" style="display: none; background: red; color: white; border-radius: 70%; padding: 7px 4px; font-size: 10px;">0</span></sup>
+                </li>
+              
+           
+              <li class="nav-item">
+                <a class="nav-link "  href="/logout-page" >Logout</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search" method="post">
+              {% csrf_token %}
+              <a style="padding:10px;font-size: 30px;" href="/alumini-profile"><i class='bx bxs-user-circle'></i></a>
+              <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+
+<!-- for count connection  final -->
+
+ <!-- <div class="card-container">
+  {% for alumini in aluminis %}
+      <div class="card col-4 p-3">
+          <h3>Username: {{ alumini.user.username }}</h3>
+          <p>First Name: {{ alumini.user.first_name }}</p>
+          <p>Industry Name: {{ alumini.industry }}</p>
+          <p>Location: {{ alumini.location }}</p>
+          <p style="display:none;" id="userID">{{request.user.id}}</p>
+          <button type="button" 
+                  style="width: 120px;" 
+                  class="btn btn-primary" 
+                  data-receiver-id="{{ alumini.user.id }}"  
+                  data-sender-username="{{ request.user.username }}">Connect</button>
+      </div>
+  {% endfor %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const connectButtons = document.querySelectorAll('.btn.btn-primary');
+  const senderID = document.getElementById("userID").innerText;
+  const requestCountSpan = document.getElementById("requestCount");
+
+  // Open WebSocket connection for the logged-in user
+  const socket = new WebSocket(`ws://${window.location.host}/ws/connection/${senderID}/`);
+
+  socket.onopen = () => {
+      console.log("WebSocket connection established successfully for user ID:", senderID);
+  };
+
+  socket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+
+      // Handle pending request count updates
+      if (data.type === 'pending_request_count') {
+          const pendingCount = data.count;
+
+          if (pendingCount > 0) {
+              requestCountSpan.style.display = "inline-block";
+              requestCountSpan.innerText = pendingCount;
+          } else {
+              requestCountSpan.style.display = "none";
+          }
+      }
+
+      // Handle new connection request notifications
+      if (data.type === 'connection_request') {
+          alert(`You have a new connection request from ${data.sender_username}`);
+      }
+  };
+
+  // Event listener for connection buttons
+  connectButtons.forEach(button => {
+      button.addEventListener('click', () => {
+          const receiverUserId = button.getAttribute('data-receiver-id');
+          const senderUsername = button.getAttribute('data-sender-username');
+
+          if (socket.readyState === WebSocket.OPEN) {
+              socket.send(JSON.stringify({
+                  'type': 'send_connection_request',
+                  'receiver_user_id': receiverUserId,
+                  'sender_username': senderUsername
+              }));
+
+              button.innerText = "Request Sent";
+              button.disabled = true;
+              button.classList.remove("btn-primary");
+              button.classList.add("btn-success");
+          } else {
+              console.error("WebSocket is not open. Unable to send the connection request.");
+              alert("Failed to send the connection request. Please try again later.");
+          }
+      });
+  });
+});
+</script>  -->
+
+
+
+<!-- for show connected -->
+
+ <div class="card-container">
+    {% for alumini in aluminis %}
+        <div style="margin: 10px;" class="card col-4 p-3">
+            <h3>{{ alumini.user.username }}</h3>
+            <p>Name: {{ alumini.user.first_name }}</p>
+            <p>Industry : {{ alumini.industry }}</p>
+            <p>Location: {{ alumini.location }}</p>
+            <p style="display:none;" id="userID">{{ request.user.id }}</p>
+  
+            <button type="button"  style="width: 120px;"   class="btn connect-btn btn-primary"   data-receiver-id="{{ alumini.user.id }}"  
+                    data-sender-username="{{ request.user.username }}">Connect</button>
+        </div>
+    {% endfor %}
+  </div>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const connectButtons = document.querySelectorAll('.connect-btn');
+    const senderID = document.getElementById("userID").innerText;
+    const requestCountSpan = document.getElementById("requestCount");
+
+    const socket = new WebSocket(`ws://${window.location.host}/ws/connection/${senderID}/`);
+  
+    socket.onopen = () => {
+      console.log("WebSocket connection established successfully for user ID:", senderID);
+    };
+  
+   
+    socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === 'pending_request_count') {
+          const pendingCount = data.count;
+
+          if (pendingCount > 0) {
+              requestCountSpan.style.display = "inline-block";
+              requestCountSpan.innerText = pendingCount;
+          } else {
+              requestCountSpan.style.display = "none";
+          }
+      }
+
+    if (data.type === "connection_accepted") {
+        const receiverId = data.receiver_id;
+        const senderUsername = data.sender_username;
+
+        const button = document.querySelector(`button[data-receiver-id="${receiverId}"][data-sender-username="${senderUsername}"]`);
+        
+        if (button) {
+            button.innerText = "Connected";
+            button.classList.remove("btn-primary");
+            button.classList.add("btn-success");
+            button.disabled = true; 
+        }
+        
+    }
+};
+
+
+  
+    connectButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const receiverUserId = button.getAttribute('data-receiver-id');
+        const senderUsername = button.getAttribute('data-sender-username');
+  
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({
+            'type': 'send_connection_request',
+            'receiver_user_id': receiverUserId,
+            'sender_username': senderUsername
+          }));
+  
+          button.innerText = "Request Sent";
+          button.disabled = true;
+          button.classList.remove("btn-primary");
+          button.classList.add("btn-success");
+        } else {
+          console.error("WebSocket is not open. Unable to send the connection request.");
+          alert("Failed to send the connection request. Please try again later.");
+        }
+      });
+    });
+  });
+  </script>
+  
+  

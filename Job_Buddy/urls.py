@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('Base.urls')),
     path('admin_app', include('Admin_Management.urls')),
     path('Post', include('Post.urls')),
+    path('Alumini', include('Alumini.urls')),
 
 ]

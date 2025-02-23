@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumini</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'alumini.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+      <style>
+        .fa-heart {
+            color: gray;
+        }
+  
+          /* Red color for filled heart */
+          .fa-heart.fas {
+              color: red;
+          }
+
+          .post-actions {
+                display: flex;
+                align-items: center;
+                gap: 30px; /* Space between Like & Comment sections */
+                margin-top: 10px;
+            }
+
+            .like-section, .comment-section {
+                display: flex;
+                flex-direction: column; /* Makes the count appear below the icon */
+                align-items: center;
+            }
+
+            .like-count, .comment-count {
+                margin-top: 5px;
+                font-size: 16px;
+                color: #555;
+            }
+
+            .like-link i {
+                color: gray;
+                transition: color 0.3s ease;
+            }
+
+            .like-link .fas {
+                color: red; /* Liked heart turns red */
+            }
+
+            .comment-link i {
+                color: #007bff; /* Blue for comment */
+                transition: color 0.3s ease;
+            }
+
+            .like-link:hover i, .comment-link:hover i {
+                color: black; /* Darker on hover */
+            }
+
+            .comment-container {
+                margin-top: 10px;
+                display: none;
+            }
+
+            .comment-input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .comment-submit {
+                margin-top: 5px;
+                padding: 6px 12px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .comment-submit:hover {
+                background-color: #0056b3;
+            }
+
+
+
+      </style>
+  </head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/alumini-profile-show/{{ user.id }}">Alumni</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/alumini-page">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-post">Create Post</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-list">Show Alumnis</a>
+              </li>
+           
+              <li class="nav-item">
+                <a class="nav-link "  href="/logout-page" >Logout</a>
+              </li>
+            </ul>
+            <form class="d-flex" method="post" role="search">
+              {% csrf_token %}
+              <a style="padding:10px;font-size: 30px;" href="/alumini-profile"><i class='bx bxs-user-circle'></i></a>
+              <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+     
+      
+     
+    <div class="container mt-5" style="margin-bottom: 10px;">
+        <form method="POST" class="col-4 max-auto card p-3 shadow-lg"enctype="multipart/form-data"> 
+           {% csrf_token %}
+            {% for post in allpost%}
+                 <h2>{{post.alumni}}</h2><br>
+                 <img src="{{post.image.url}}" alt="" width="50%" height="200">
+                 <p>{{post.description}}<p>
+                 <small>{{post.created_at}}</small>
+                 <br><br>
+
+                 <!-- <a href="javascript:void(0);" class="like-link">
+                  <i class="fa-heart {% if request.user in post.like.all %}fas{% else %}far{% endif %}" 
+                     data-post-id="{{ post.id }}" 
+                     style="cursor: pointer; font-size: 30px;"></i>
+              </a><br>
+              <span class="like-count" style="margin-left: 12px;">{{ post.like.count }}</span> -->
+
+              <div class="post-actions">
+                <!-- Like Section -->
+                <div class="like-section">
+                    <a class="like-link" style="cursor: pointer;">
+                        <i class="fa-heart {% if request.user in post.like.all %}fas{% else %}far{% endif %}" 
+                           data-post-id="{{ post.id }}" 
+                           style="cursor: pointer; font-size: 30px;"></i>
+                    </a> 
+                    <span class="like-count">{{ post.like.count }}</span>
+                </div>
+            
+                <!-- Comment Section -->
+                <div class="comment-section">
+                    <a class="comment-link" data-post-id="{{ post.id }}">
+                        <i class="fa fa-comment" style="cursor: pointer; font-size: 30px;"></i>
+                    </a>
+                    <span class="comment-count">{{ post.comments.count }}</span>
+                </div>
+            </div>
+            
+            <!-- Comment Section (Initially Hidden) -->
+            <div class="comment-container" id="comments-{{ post.id }}" style="display: none;">
+                <div class="comment-list"></div>
+                <textarea class="comment-input" data-post-id="{{ post.id }}" placeholder="Write a comment..."></textarea>
+                <button class="comment-submit" data-post-id="{{ post.id }}">Send</button>
+            </div>
+            <hr>
+            {% endfor %} 
+
+          </form> 
+        </div> 
+
+
+       
+        <script>
+
+          // document.addEventListener('DOMContentLoaded', function () {
+          //     const csrfToken = '{{ csrf_token }}'; // Fetch CSRF token from Django template
+          
+          //     // Add event listener to all like icons
+          //     document.querySelectorAll('.like-link').forEach(link => {
+          //         link.addEventListener('click', function () {
+          //             const icon = this.querySelector('i'); // Heart icon
+          //             const postId = icon.getAttribute('data-post-id'); // Post ID
+          //             const likeCountElement = this.nextElementSibling; // Like count element
+          
+          //             // Send AJAX request
+          //             fetch(`/like/${postId}/`, {
+          //                 method: 'POST',
+          //                 headers: {
+          //                     'X-CSRFToken': csrfToken, // CSRF token for security
+          //                     'Content-Type': 'application/json',
+          //                 },
+          //             })
+          //                 .then(response => response.json())
+          //                 .then(data => {
+          //                     if (data.likes_count !== undefined) {
+          //                         // Update like count dynamically
+          //                         likeCountElement.textContent = data.likes_count;
+          
+          //                         // Toggle heart icon class (filled/unfilled)
+          //                         if (data.liked) {
+          //                             icon.classList.remove('far'); // Remove unfilled heart
+          //                             icon.classList.add('fas'); // Add filled heart
+          //                         } else {
+          //                             icon.classList.remove('fas'); // Remove filled heart
+          //                             icon.classList.add('far'); // Add unfilled heart
+          //                         }
+          //                     } else {
+          //                         console.error('Error: No like count received from server');
+          //                     }
+          //                 })
+          //                 .catch(error => console.error('Error:', error));
+          //         });
+          //     });
+          // });
+
+          document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.like-link').forEach(link => {
+        link.addEventListener('click', async function (event) {
+            event.preventDefault(); // ✅ Prevent the default anchor action
+            event.stopPropagation(); // ✅ Prevent unnecessary event bubbling
+
+            const icon = this.querySelector('i'); // Get the heart icon
+            const postId = icon.getAttribute('data-post-id'); // Get post ID
+            const likeCountElement = this.nextElementSibling; // Get the like count element
+
+            try {
+                const response = await fetch(`/like/${postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', // CSRF token for security
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (data.likes_count !== undefined) {
+                    likeCountElement.textContent = data.likes_count; // ✅ Update like count dynamically
+
+                    // ✅ Toggle heart icon (filled/unfilled)
+                    icon.classList.toggle('fas', data.liked);
+                    icon.classList.toggle('far', !data.liked);
+                } else {
+                    console.error('Error: Invalid response from server');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const csrfToken = "{{ csrf_token }}"; // Django CSRF token
+
+    // Toggle comment section and load comments
+    document.querySelectorAll(".comment-link").forEach(button => {
+        button.addEventListener("click", function () {
+            const postId = this.getAttribute("data-post-id");
+            const commentSection = document.getElementById(`comments-${postId}`);
+            const commentList = commentSection.querySelector(".comment-list");
+
+            if (commentSection.style.display === "none") {
+                commentSection.style.display = "block";
+
+                // Fetch comments via AJAX
+                fetch(`/get-comments/${postId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        commentList.innerHTML = ""; // Clear previous comments
+                        data.comments.forEach(comment => {
+                            commentList.innerHTML += `<p><strong>${comment.user}:</strong> ${comment.text} <small>${comment.created_at}</small></p>`;
+                        });
+                    })
+                    .catch(error => console.error("Error:", error));
+            } else {
+                commentSection.style.display = "none";
+            }
+        });
+    });
+
+    // Prevent form submission from reloading the page
+    document.querySelectorAll(".comment-submit").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // ⛔ Prevent page reload!
+
+            const postId = this.getAttribute("data-post-id");
+            const textarea = document.querySelector(`.comment-input[data-post-id="${postId}"]`);
+            const commentText = textarea.value.trim();
+            const commentList = document.getElementById(`comments-${postId}`).querySelector(".comment-list");
+            const commentCount = document.querySelector(`.comment-link[data-post-id="${postId}"]`).nextElementSibling;
+
+            if (commentText !== "") {
+                fetch("/add-comment/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `post_id=${postId}&comment_text=${encodeURIComponent(commentText)}`,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error("Error:", data.error);
+                        } else {
+                            // Add new comment dynamically without reloading
+                            commentList.innerHTML += `<p><strong>${data.user}:</strong> ${data.text} <small>${data.created_at}</small></p>`;
+
+                            // Update comment count
+                            commentCount.textContent = data.comment_count;
+
+                            // Clear textarea
+                            textarea.value = "";
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
+    });
+});
+        
+
+          </script>
+          
+</body>
+
+</html>

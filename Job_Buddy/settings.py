@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Admin_Management',
     'User_Management',
     'Post',
+    'Alumini',
 
 ]
 
@@ -136,7 +137,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'Admin_Management', 'static'),  # Static files for admin
     os.path.join(BASE_DIR, 'User_Management', 'static'),  # Static files for User
     os.path.join(BASE_DIR, 'base', 'static'),  # Static files for user
+
 ]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "Alumini" / "static",  # If your static files are in the Alumini app
+]
+
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'

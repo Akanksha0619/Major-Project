@@ -1,0 +1,8 @@
+body{
+    background-image: url('/static/images/background.png');
+}
+
+form{
+    top:100px;
+    left:300px;
+}

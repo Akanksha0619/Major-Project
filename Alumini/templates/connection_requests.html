@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>connection_requests</title>
+    <link rel="stylesheet" href="{% static 'connection_request.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/alumini-profile-show/{{ user.id }}" style="margin-bottom: 15px;">Alumni</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/alumini-page">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-post">Create Post</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/alumini-list">Show Alumnis</a>
+              </li>
+
+              
+                <li class="nav-link" >
+                  <a href="/connection-requests/" style="text-decoration: none; color: rgb(87, 85, 85);"><img src="{% static '/images/iconi.png' %}" alt="" width="40" height="40"></a>
+                  <sup><span id="requestCount" style="display: none; background: red; color: white; border-radius: 70%; padding: 7px 4px; font-size: 10px;">0</span></sup>
+                </li>
+              
+           
+              <li class="nav-item">
+                <a class="nav-link "  href="/logout-page" >Logout</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search" method="post">
+              {% csrf_token %}
+              <a style="padding:10px;font-size: 30px;" href="/alumini-profile"><i class='bx bxs-user-circle'></i></a>
+              <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+
+<!-- for delete button, final code -->
+
+<!-- <div class="card-container col-5">
+<div class="connection-requests-container">
+    <p id="receiverID" style="display:none;">{{ receiver_id }}</p> 
+    {% for request in pending_requests %}
+    <div style="margin: 10px;" class="card p-3 mb-3" data-request-id="{{ request.id }}">
+        <div class="card-content">
+            <ul>
+                <li style="list-style: none;"><h5>Sender: {{ request.sender.username }}</h5></li>
+                <li style="list-style: none;"><p>First Name: {{ request.sender.first_name }}</p></li>
+            </ul>
+            <div class="button-group">
+                <button style="width: 100px;" class="btn btn-success accept-btn" data-request-id="{{ request.id }}">Accept</button>
+                <button style="width: 100px;" class="btn btn-danger delete-btn" data-request-id="{{ request.id }}">Delete</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+
+<script>  
+     
+document.addEventListener("DOMContentLoaded", () => {
+    const acceptButtons = document.querySelectorAll(".accept-btn");
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    const receiverID = document.getElementById("receiverID").innerText;
+
+    const socket = new WebSocket(`ws://${window.location.host}/ws/connection/${receiverID}/`);
+
+    socket.onopen = () => {
+        console.log("WebSocket connection established.");
+    };
+
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+
+        if (data.type === "connection_accepted" || data.type === "connection_rejected") {
+            const requestId = data.request_id;
+
+            // Remove the request card from the UI
+            const requestCard = document.querySelector(`[data-request-id="${requestId}"]`);
+            if (requestCard) {
+                requestCard.remove();
+            }
+        }
+
+        if (data.type === "update_pending_requests") {
+            console.log("Pending requests updated.");
+        }
+    };
+
+    acceptButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const requestId = button.getAttribute("data-request-id");
+
+            // Send WebSocket message to accept the request
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(
+                    JSON.stringify({
+                        type: "accept_connection_request",
+                        request_id: requestId,
+                    })
+                );
+            }
+        });
+    });
+
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const requestId = button.getAttribute("data-request-id");
+
+            // Send WebSocket message to delete (reject) the request
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(
+                    JSON.stringify({
+                        type: "delete_connection_request",
+                        request_id: requestId,
+                    })
+                );
+            }
+        });
+    });
+});
+</script> -->
+
+
+
+
+<!-- for show connected -->
+ <div class="card-container col-5">
+    <div class="connection-requests-container">
+        <p id="receiverID" style="display:none;">{{ receiver_id }}</p> 
+        {% for request in pending_requests %}
+        <div style="margin: 10px;" class="card p-3 mb-3" data-request-id="{{ request.id }}">
+            <div class="card-content">
+                <ul>
+                    <li style="list-style: none;"><h5>Sender: {{ request.sender.username }}</h5></li>
+                    <li style="list-style: none;"><p>First Name: {{ request.sender.first_name }}</p></li>
+                </ul>
+                <div class="button-group">
+                    <button style="width: 120px;" class="btn btn-success accept-btn" data-request-id="{{ request.id }}">Accept</button>
+                    <button style="width: 100px;" class="btn btn-danger delete-btn" data-request-id="{{ request.id }}">Delete</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const acceptButtons = document.querySelectorAll(".accept-btn");
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+        const receiverID = document.getElementById("receiverID").innerText;
+    
+        const socket = new WebSocket(`ws://${window.location.host}/ws/connection/${receiverID}/`);
+    
+        socket.onopen = () => {
+            console.log("WebSocket connection established.");
+        };
+    
+             
+    socket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === "connection_accepted") {
+        const requestId = data.request_id;
+
+        // Find the button using request_id
+        const button = document.querySelector(`[data-request-id="${requestId}"]`);
+        if (button) {
+            button.querySelector(".delete-btn").remove();
+            const acceptBtn = button.querySelector(".accept-btn");
+            // button.innerText = "Connected";
+            // button.classList.remove("btn-primary");
+            // button.classList.add("btn-success");
+            // button.disabled = true;
+            acceptBtn.innerText = "Connected";
+            acceptBtn.classList.remove("btn-primary");
+            acceptBtn.classList.add("btn-success");
+            acceptBtn.disabled = true;
+
+        }
+    }
+
+    if (data.type === "connection_rejected") {
+        const requestId = data.request_id;
+        const card = document.querySelector(`[data-request-id="${requestId}"]`);
+        console.log("Request ID:", requestId, "Status:", status);
+
+        if (card) {
+            // Update UI to show Deleted
+            card.querySelector(".accept-btn").remove();
+            const deleteBtn = card.querySelector(".delete-btn");
+            deleteBtn.innerText = "Deleted";
+            deleteBtn.classList.remove("btn-danger");
+            deleteBtn.classList.add("btn-secondary");
+            deleteBtn.disabled = true;
+        }
+    }
+
+        const senderButton = document.querySelector(`[data-request-id="${requestId}"]`);
+        if (senderButton) {
+            if (status === "Accepted") {
+                senderButton.innerText = "Connected";
+                senderButton.classList.remove("btn-primary");
+                senderButton.classList.add("btn-success");
+                senderButton.disabled = true;
+            } 
+            else{
+                senderButton.innerText = "Rejected";
+                senderButton.classList.remove("btn-primary");
+                senderButton.classList.add("btn-danger");
+                senderButton.disabled = true;
+            }
+        }
+    }
+        
+    // else if(status === "Rejected") {
+    //             senderButton.innerText = "Rejected";
+    //             senderButton.classList.remove("btn-primary");
+    //             senderButton.classList.add("btn-danger");
+    //             senderButton.disabled = true;
+    //         }
+
+
+        acceptButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const requestId = button.getAttribute("data-request-id");
+    
+                // Send WebSocket message to accept the request
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(
+                        JSON.stringify({
+                            type: "accept_connection_request",
+                            request_id: requestId,
+                        })
+                    );
+                }
+            });
+        });
+    
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const requestId = button.getAttribute("data-request-id");
+    
+                // Send WebSocket message to delete (reject) the request
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(
+                        JSON.stringify({
+                            type: "delete_connection_request",
+                            request_id: requestId,
+                        })
+                    );
+                }
+            });
+        });
+    });
+    </script>
+     
+
+
+</body>
+</html>

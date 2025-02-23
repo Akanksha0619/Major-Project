@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>post comment</title>
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <form method="post" class="col-5 max-auto card p-3 shadow-lg" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+            
+            <label for="">Comment</label>
+            <input type="text" name="comment"><br>
+            
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+        </div>
+</body>
+</html>

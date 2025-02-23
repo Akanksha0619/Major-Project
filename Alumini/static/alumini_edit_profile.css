@@ -1,0 +1,9 @@
+body{
+    /* background-color: black; */
+    background-image: url('/static/images/background.png');
+}
+
+form{
+    top:50px;
+    left:300px;
+}
